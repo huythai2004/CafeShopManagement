@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="vi">
+<head>
+    <title>Sửa danh mục - Highland Coffee</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="max-w-2xl mx-auto">
+        <div class="flex items-center justify-between mb-8">
+            <h1 class="font-display text-3xl text-espresso">
+                <i class="fas fa-folder-open mr-3"></i>Sửa danh mục
+            </h1>
+            <a th:href="@{/admin/categories}" class="text-coffee-600 hover:text-coffee-800">
+                <i class="fas fa-arrow-left mr-2"></i>Quay lại
+            </a>
+        </div>
+
+        <form th:action="@{/admin/categories/edit/{id}(id=${category.id})}" method="post" th:object="${category}" class="bg-white rounded-xl shadow-md p-6">
+            <div class="mb-4">
+                <label class="block text-coffee-700 font-medium mb-2">Tên danh mục *</label>
+                <input type="text" th:field="*{name}" required
+                       class="w-full px-4 py-2 border border-coffee-200 rounded-lg focus:ring-2 focus:ring-coffee-400 focus:border-transparent">
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-coffee-700 font-medium mb-2">Mô tả</label>
+                <textarea th:field="*{description}" rows="3"
+                          class="w-full px-4 py-2 border border-coffee-200 rounded-lg focus:ring-2 focus:ring-coffee-400 focus:border-transparent"></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="block text-coffee-700 font-medium mb-2">Thứ tự hiển thị</label>
+                    <input type="number" th:field="*{displayOrder}"
+                           class="w-full px-4 py-2 border border-coffee-200 rounded-lg focus:ring-2 focus:ring-coffee-400 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-coffee-700 font-medium mb-2">Trạng thái</label>
+                    <select th:field="*{isActive}"
+                            class="w-full px-4 py-2 border border-coffee-200 rounded-lg focus:ring-2 focus:ring-coffee-400 focus:border-transparent">
+                        <option value="true">Hoạt động</option>
+                        <option value="false">Ẩn</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" 
+                    class="w-full bg-coffee-600 hover:bg-coffee-700 text-white py-3 rounded-lg font-semibold transition duration-200">
+                <i class="fas fa-save mr-2"></i>Cập nhật
+            </button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
+

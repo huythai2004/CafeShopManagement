@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="vi">
+<head>
+    <title>Báo cáo - Highland Coffee</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1 class="font-display text-3xl text-espresso mb-8">
+        <i class="fas fa-chart-bar mr-3"></i>Báo cáo & Thống kê
+    </h1>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white">
+            <p class="text-green-100 text-sm">Doanh thu hôm nay</p>
+            <p class="text-3xl font-bold mt-1" th:text="${#numbers.formatDecimal(todayReport?.totalRevenue ?: 0, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</p>
+        </div>
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white">
+            <p class="text-blue-100 text-sm">Đơn hàng hôm nay</p>
+            <p class="text-3xl font-bold mt-1" th:text="${todayReport?.totalOrders ?: 0}">0</p>
+        </div>
+        <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl p-6 text-white">
+            <p class="text-yellow-100 text-sm">Đơn chờ xử lý</p>
+            <p class="text-3xl font-bold mt-1" th:text="${stats?.pendingOrders ?: 0}">0</p>
+        </div>
+        <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white">
+            <p class="text-purple-100 text-sm">Đơn hoàn thành</p>
+            <p class="text-3xl font-bold mt-1" th:text="${stats?.completedOrders ?: 0}">0</p>
+        </div>
+    </div>
+
+    <!-- Report Links -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <a th:href="@{/admin/reports/daily}" class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition duration-200 text-center group">
+            <div class="w-16 h-16 mx-auto mb-4 bg-coffee-100 rounded-full flex items-center justify-center group-hover:bg-coffee-200 transition">
+                <i class="fas fa-calendar-day text-2xl text-coffee-600"></i>
+            </div>
+            <h3 class="font-semibold text-espresso">Báo cáo ngày</h3>
+            <p class="text-coffee-500 text-sm mt-1">Xem doanh thu theo ngày</p>
+        </a>
+
+        <a th:href="@{/admin/reports/monthly}" class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition duration-200 text-center group">
+            <div class="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-200 transition">
+                <i class="fas fa-calendar-alt text-2xl text-blue-600"></i>
+            </div>
+            <h3 class="font-semibold text-espresso">Báo cáo tháng</h3>
+            <p class="text-coffee-500 text-sm mt-1">Xem doanh thu theo tháng</p>
+        </a>
+
+        <a th:href="@{/admin/reports/bestsellers}" class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition duration-200 text-center group">
+            <div class="w-16 h-16 mx-auto mb-4 bg-yellow-100 rounded-full flex items-center justify-center group-hover:bg-yellow-200 transition">
+                <i class="fas fa-trophy text-2xl text-yellow-600"></i>
+            </div>
+            <h3 class="font-semibold text-espresso">Best Sellers</h3>
+            <p class="text-coffee-500 text-sm mt-1">Sản phẩm bán chạy</p>
+        </a>
+
+        <a th:href="@{/admin/reports/orders}" class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition duration-200 text-center group">
+            <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center group-hover:bg-green-200 transition">
+                <i class="fas fa-history text-2xl text-green-600"></i>
+            </div>
+            <h3 class="font-semibold text-espresso">Lịch sử đơn hàng</h3>
+            <p class="text-coffee-500 text-sm mt-1">Xem tất cả đơn hàng</p>
+        </a>
+    </div>
+</div>
+</body>
+</html>
+

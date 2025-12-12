@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="vi">
+<head>
+    <title>Menu - Highland Coffee</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Sidebar Categories -->
+        <div class="lg:w-64 flex-shrink-0">
+            <div class="bg-white rounded-xl shadow-md p-6 sticky top-24">
+                <h3 class="font-display text-xl text-espresso mb-4">
+                    <i class="fas fa-tags mr-2"></i> Danh mục
+                </h3>
+                <ul class="space-y-2">
+                    <li>
+                        <a th:href="@{/menu}" 
+                           th:classappend="${selectedCategoryId == null && searchKeyword == null} ? 'bg-coffee-100 text-espresso' : 'text-gray-600 hover:bg-coffee-50'"
+                           class="block px-4 py-2 rounded-lg transition duration-200">
+                            Tất cả sản phẩm
+                        </a>
+                    </li>
+                    <li th:each="category : ${categories}">
+                        <a th:href="@{/menu(categoryId=${category.id})}"
+                           th:classappend="${selectedCategoryId == category.id} ? 'bg-coffee-100 text-espresso' : 'text-gray-600 hover:bg-coffee-50'"
+                           class="block px-4 py-2 rounded-lg transition duration-200"
+                           th:text="${category.name}">
+                            Category
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Search -->
+                <div class="mt-6 pt-6 border-t border-coffee-200">
+                    <form th:action="@{/menu}" method="get">
+                        <div class="relative">
+                            <input type="text" name="search" 
+                                   th:value="${searchKeyword}"
+                                   placeholder="Tìm kiếm..."
+                                   class="w-full pl-10 pr-4 py-2 border border-coffee-200 rounded-lg focus:ring-2 focus:ring-coffee-400 focus:border-transparent">
+                            <i class="fas fa-search absolute left-3 top-3 text-coffee-400"></i>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="flex-1">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="font-display text-2xl text-espresso">
+                    <span th:if="${searchKeyword != null}">Kết quả tìm kiếm: "<span th:text="${searchKeyword}"></span>"</span>
+                    <span th:if="${searchKeyword == null}">Menu</span>
+                </h2>
+                <span class="text-coffee-600" th:text="${products.size()} + ' sản phẩm'">0 sản phẩm</span>
+            </div>
+
+            <div th:if="${products.isEmpty()}" class="text-center py-16">
+                <i class="fas fa-mug-hot text-6xl text-coffee-300 mb-4"></i>
+                <p class="text-coffee-600 text-lg">Không tìm thấy sản phẩm nào</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div th:each="product : ${products}" 
+                     class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300 group">
+                    <div class="relative h-48 overflow-hidden">
+                        <img th:src="${product.imageUrl ?: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93'}" 
+                             th:alt="${product.name}"
+                             class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <div th:if="${product.isFeatured}" 
+                             class="absolute top-3 left-3 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                            <i class="fas fa-star mr-1"></i> Nổi bật
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-start justify-between mb-2">
+                            <h3 class="font-semibold text-lg text-espresso" th:text="${product.name}">Product</h3>
+                            <span class="text-coffee-700 font-bold" 
+                                  th:text="${#numbers.formatDecimal(product.defaultPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+                                0đ
+                            </span>
+                        </div>
+                        <p class="text-coffee-500 text-sm mb-4 line-clamp-2" th:text="${product.description}">Description</p>
+                        
+                        <form th:action="@{/cart/add}" method="post" class="flex items-center gap-2">
+                            <input type="hidden" name="productId" th:value="${product.id}">
+                            <div class="flex items-center border border-coffee-200 rounded-lg">
+                                <button type="button" onclick="decreaseQty(this)" 
+                                        class="px-3 py-2 text-coffee-600 hover:bg-coffee-50">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" name="quantity" value="1" min="1" 
+                                       class="w-12 text-center border-x border-coffee-200 py-2 focus:outline-none">
+                                <button type="button" onclick="increaseQty(this)" 
+                                        class="px-3 py-2 text-coffee-600 hover:bg-coffee-50">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <button type="submit" 
+                                    class="flex-1 bg-coffee-600 hover:bg-coffee-700 text-white py-2 px-4 rounded-lg transition duration-200 font-medium">
+                                <i class="fas fa-cart-plus mr-2"></i> Thêm
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function increaseQty(btn) {
+    const input = btn.parentElement.querySelector('input[type="number"]');
+    input.value = parseInt(input.value) + 1;
+}
+
+function decreaseQty(btn) {
+    const input = btn.parentElement.querySelector('input[type="number"]');
+    if (parseInt(input.value) > 1) {
+        input.value = parseInt(input.value) - 1;
+    }
+}
+</script>
+</body>
+</html>
+

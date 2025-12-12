@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="vi">
+<head>
+    <title>Giỏ hàng - Highland Coffee</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1 class="font-display text-3xl text-espresso mb-8">
+        <i class="fas fa-shopping-cart mr-3"></i>Giỏ hàng của bạn
+    </h1>
+
+    <div th:if="${cartItems == null || cartItems.isEmpty()}" class="text-center py-16 bg-white rounded-xl shadow-md">
+        <i class="fas fa-shopping-basket text-6xl text-coffee-300 mb-4"></i>
+        <p class="text-coffee-600 text-xl mb-4">Giỏ hàng trống</p>
+        <a th:href="@{/menu}" class="inline-block bg-coffee-600 hover:bg-coffee-700 text-white px-6 py-3 rounded-lg font-medium transition duration-200">
+            <i class="fas fa-arrow-left mr-2"></i> Tiếp tục mua sắm
+        </a>
+    </div>
+
+    <div th:if="${cartItems != null && !cartItems.isEmpty()}" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Cart Items -->
+        <div class="lg:col-span-2 space-y-4">
+            <div th:each="entry : ${cartItems}" 
+                 class="bg-white rounded-xl shadow-md p-4 flex items-center gap-4">
+                <img th:src="${entry.value.imageUrl ?: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93'}"
+                     class="w-20 h-20 object-cover rounded-lg">
+                <div class="flex-1">
+                    <h3 class="font-semibold text-espresso" th:text="${entry.value.productName}">Product</h3>
+                    <p th:if="${entry.value.modifierNames != null && !entry.value.modifierNames.isEmpty()}"
+                       class="text-sm text-coffee-500"
+                       th:text="${#strings.listJoin(entry.value.modifierNames, ', ')}">
+                        Modifiers
+                    </p>
+                    <p class="text-coffee-700 font-medium" 
+                       th:text="${#numbers.formatDecimal(entry.value.itemPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+                        0đ
+                    </p>
+                </div>
+                
+                <form th:action="@{/cart/update}" method="post" class="flex items-center gap-2">
+                    <input type="hidden" name="itemKey" th:value="${entry.key}">
+                    <div class="flex items-center border border-coffee-200 rounded-lg">
+                        <button type="submit" name="quantity" th:value="${entry.value.quantity - 1}"
+                                class="px-3 py-1 text-coffee-600 hover:bg-coffee-50">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <span class="px-4 py-1 border-x border-coffee-200" th:text="${entry.value.quantity}">1</span>
+                        <button type="submit" name="quantity" th:value="${entry.value.quantity + 1}"
+                                class="px-3 py-1 text-coffee-600 hover:bg-coffee-50">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-right">
+                    <p class="font-bold text-lg text-espresso" 
+                       th:text="${#numbers.formatDecimal(entry.value.totalPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+                        0đ
+                    </p>
+                    <form th:action="@{/cart/remove}" method="post" class="mt-2">
+                        <input type="hidden" name="itemKey" th:value="${entry.key}">
+                        <button type="submit" class="text-red-500 hover:text-red-700 text-sm">
+                            <i class="fas fa-trash mr-1"></i> Xóa
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-4">
+                <a th:href="@{/menu}" class="text-coffee-600 hover:text-coffee-800 font-medium">
+                    <i class="fas fa-arrow-left mr-2"></i> Tiếp tục mua sắm
+                </a>
+                <form th:action="@{/cart/clear}" method="post">
+                    <button type="submit" class="text-red-500 hover:text-red-700 font-medium">
+                        <i class="fas fa-trash-alt mr-2"></i> Xóa tất cả
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-xl shadow-md p-6 sticky top-24">
+                <h3 class="font-display text-xl text-espresso mb-4 pb-4 border-b border-coffee-200">
+                    Tóm tắt đơn hàng
+                </h3>
+                
+                <div class="space-y-3 mb-6">
+                    <div class="flex justify-between text-coffee-600">
+                        <span>Số lượng:</span>
+                        <span th:text="${itemCount} + ' sản phẩm'">0 sản phẩm</span>
+                    </div>
+                    <div class="flex justify-between text-coffee-600">
+                        <span>Tạm tính:</span>
+                        <span th:text="${#numbers.formatDecimal(subtotal, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
+                    </div>
+                    <div class="flex justify-between font-bold text-lg text-espresso pt-3 border-t border-coffee-200">
+                        <span>Tổng cộng:</span>
+                        <span th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
+                    </div>
+                </div>
+
+                <a th:href="@{/order/checkout}" 
+                   class="block w-full bg-coffee-600 hover:bg-coffee-700 text-white text-center py-3 rounded-lg font-semibold transition duration-200">
+                    <i class="fas fa-credit-card mr-2"></i> Tiến hành đặt hàng
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+

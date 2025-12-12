@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="vi">
+<head>
+    <title>Chi tiết danh mục - Highland Coffee</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <a th:href="@{/admin/categories}" class="text-coffee-600 hover:text-coffee-800 text-sm mb-2 inline-block">
+                <i class="fas fa-arrow-left mr-1"></i> Quay lại danh mục
+            </a>
+            <h1 class="font-display text-3xl text-espresso" th:text="${category.name}">Category Name</h1>
+        </div>
+        <a th:href="@{/admin/products/create}" class="bg-coffee-600 hover:bg-coffee-700 text-white px-4 py-2 rounded-lg font-medium">
+            <i class="fas fa-plus mr-2"></i>Thêm sản phẩm
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div th:each="product : ${products}" class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="h-40 overflow-hidden">
+                <img th:src="${product.imageUrl ?: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93'}"
+                     th:alt="${product.name}" class="w-full h-full object-cover">
+            </div>
+            <div class="p-4">
+                <h3 class="font-semibold text-espresso" th:text="${product.name}">Product</h3>
+                <p class="text-coffee-700 font-bold mt-1" th:text="${#numbers.formatDecimal(product.defaultPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</p>
+                <div class="flex gap-2 mt-3">
+                    <a th:href="@{/admin/products/edit/{id}(id=${product.id})}" class="text-coffee-600 hover:text-coffee-800 text-sm">
+                        <i class="fas fa-edit mr-1"></i> Sửa
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${products.isEmpty()}" class="bg-white rounded-xl shadow-md p-8 text-center text-gray-500">
+        <i class="fas fa-mug-hot text-4xl mb-3"></i>
+        <p>Chưa có sản phẩm nào trong danh mục này</p>
+    </div>
+</div>
+</body>
+</html>
+

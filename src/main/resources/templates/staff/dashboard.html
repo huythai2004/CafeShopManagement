@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="vi">
+<head>
+    <title>Staff Dashboard - Highland Coffee</title>
+    <meta http-equiv="refresh" content="30">
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="flex items-center justify-between mb-8">
+        <h1 class="font-display text-3xl text-espresso">
+            <i class="fas fa-clipboard-list mr-3"></i>Quản lý đơn hàng
+        </h1>
+        <div class="flex items-center gap-4">
+            <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+                <i class="fas fa-clock mr-1"></i> Chờ: <span th:text="${stats?.pendingOrders ?: 0}">0</span>
+            </span>
+            <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
+                <i class="fas fa-fire mr-1"></i> Đang làm: <span th:text="${stats?.cookingOrders ?: 0}">0</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- Pending Orders -->
+    <div class="mb-8">
+        <h2 class="text-xl font-semibold text-espresso mb-4 flex items-center">
+            <span class="w-3 h-3 bg-yellow-500 rounded-full mr-3"></span>
+            Đơn hàng chờ xác nhận
+        </h2>
+        <div th:if="${pendingOrders.isEmpty()}" class="bg-gray-50 rounded-xl p-8 text-center text-gray-500">
+            <i class="fas fa-inbox text-4xl mb-3"></i>
+            <p>Không có đơn hàng nào đang chờ</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div th:each="order : ${pendingOrders}" class="bg-white rounded-xl shadow-md overflow-hidden border-l-4 border-yellow-500">
+                <div class="p-4">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <p class="font-bold text-lg text-espresso" th:text="${order.orderNumber}">#ORDER</p>
+                            <p class="text-sm text-coffee-500" th:text="${#temporals.format(order.createdAt, 'HH:mm dd/MM')}">Time</p>
+                        </div>
+                        <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-medium">CHỜ XÁC NHẬN</span>
+                    </div>
+                    
+                    <div th:if="${order.guestName != null || order.guestPhone != null}" class="mb-3 text-sm text-coffee-600">
+                        <i class="fas fa-user mr-1"></i> 
+                        <span th:text="${order.guestName ?: 'Khách'}">Guest</span>
+                        <span th:if="${order.guestPhone != null}" th:text="' - ' + ${order.guestPhone}"></span>
+                    </div>
+
+                    <div class="space-y-1 mb-3 text-sm">
+                        <div th:each="item : ${order.orderItems}" class="flex justify-between">
+                            <span><span th:text="${item.quantity}">1</span>x <span th:text="${item.productName}">Product</span></span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-3 border-t border-coffee-100">
+                        <span class="font-bold text-espresso" 
+                              th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
+                        <div class="flex gap-2">
+                            <form th:action="@{/staff/order/{id}/reject(id=${order.id})}" method="post">
+                                <button type="submit" class="px-3 py-1 bg-red-100 text-red-600 rounded hover:bg-red-200 transition">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </form>
+                            <form th:action="@{/staff/order/{id}/approve(id=${order.id})}" method="post">
+                                <button type="submit" class="px-3 py-1 bg-green-100 text-green-600 rounded hover:bg-green-200 transition">
+                                    <i class="fas fa-check"></i> Xác nhận
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Approved Orders (Ready to Cook) -->
+    <div class="mb-8">
+        <h2 class="text-xl font-semibold text-espresso mb-4 flex items-center">
+            <span class="w-3 h-3 bg-blue-500 rounded-full mr-3"></span>
+            Đơn hàng đã xác nhận
+        </h2>
+        <div th:if="${approvedOrders.isEmpty()}" class="bg-gray-50 rounded-xl p-6 text-center text-gray-500">
+            Không có đơn hàng
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div th:each="order : ${approvedOrders}" class="bg-white rounded-xl shadow-md overflow-hidden border-l-4 border-blue-500">
+                <div class="p-4">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <p class="font-bold text-lg text-espresso" th:text="${order.orderNumber}">#ORDER</p>
+                            <p class="text-sm text-coffee-500" th:text="${#temporals.format(order.createdAt, 'HH:mm dd/MM')}">Time</p>
+                        </div>
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">ĐÃ XÁC NHẬN</span>
+                    </div>
+
+                    <div class="space-y-1 mb-3 text-sm">
+                        <div th:each="item : ${order.orderItems}" class="flex justify-between">
+                            <span><span th:text="${item.quantity}">1</span>x <span th:text="${item.productName}">Product</span></span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-3 border-t border-coffee-100">
+                        <span class="font-bold text-espresso" 
+                              th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
+                        <form th:action="@{/staff/order/{id}/cooking(id=${order.id})}" method="post">
+                            <button type="submit" class="px-4 py-1 bg-orange-500 text-white rounded hover:bg-orange-600 transition">
+                                <i class="fas fa-fire mr-1"></i> Bắt đầu làm
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cooking Orders -->
+    <div>
+        <h2 class="text-xl font-semibold text-espresso mb-4 flex items-center">
+            <span class="w-3 h-3 bg-orange-500 rounded-full mr-3 animate-pulse"></span>
+            Đang pha chế
+        </h2>
+        <div th:if="${cookingOrders.isEmpty()}" class="bg-gray-50 rounded-xl p-6 text-center text-gray-500">
+            Không có đơn hàng đang pha chế
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div th:each="order : ${cookingOrders}" class="bg-white rounded-xl shadow-md overflow-hidden border-l-4 border-orange-500">
+                <div class="p-4">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <p class="font-bold text-lg text-espresso" th:text="${order.orderNumber}">#ORDER</p>
+                            <p class="text-sm text-coffee-500" th:text="${#temporals.format(order.createdAt, 'HH:mm dd/MM')}">Time</p>
+                        </div>
+                        <span class="bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs font-medium animate-pulse">ĐANG LÀM</span>
+                    </div>
+
+                    <div class="space-y-1 mb-3 text-sm">
+                        <div th:each="item : ${order.orderItems}" class="flex justify-between">
+                            <span><span th:text="${item.quantity}">1</span>x <span th:text="${item.productName}">Product</span></span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-3 border-t border-coffee-100">
+                        <span class="font-bold text-espresso" 
+                              th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
+                        <form th:action="@{/staff/order/{id}/done(id=${order.id})}" method="post">
+                            <button type="submit" class="px-4 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition">
+                                <i class="fas fa-check mr-1"></i> Hoàn thành
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p class="text-center text-coffee-400 text-sm mt-8">
+        <i class="fas fa-sync-alt mr-1"></i> Tự động cập nhật mỗi 30 giây
+    </p>
+</div>
+</body>
+</html>
+

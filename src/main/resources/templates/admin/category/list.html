@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="vi">
+<head>
+    <title>Quản lý danh mục - Highland Coffee</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="flex items-center justify-between mb-8">
+        <h1 class="font-display text-3xl text-espresso">
+            <i class="fas fa-tags mr-3"></i>Quản lý danh mục
+        </h1>
+        <a th:href="@{/admin/categories/create}" 
+           class="bg-coffee-600 hover:bg-coffee-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200">
+            <i class="fas fa-plus mr-2"></i>Thêm danh mục
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div th:each="category : ${categories}" class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-coffee-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-mug-hot text-coffee-600 text-xl"></i>
+                    </div>
+                    <span th:if="${category.isActive}" class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">Hoạt động</span>
+                    <span th:unless="${category.isActive}" class="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-medium">Ẩn</span>
+                </div>
+                <h3 class="font-semibold text-lg text-espresso mb-2" th:text="${category.name}">Category</h3>
+                <p class="text-coffee-500 text-sm mb-4 line-clamp-2" th:text="${category.description ?: 'Không có mô tả'}">Description</p>
+                <p class="text-sm text-coffee-400">Thứ tự: <span th:text="${category.displayOrder}">0</span></p>
+            </div>
+            <div class="px-6 py-3 bg-coffee-50 flex justify-between items-center">
+                <a th:href="@{/admin/categories/view/{id}(id=${category.id})}" class="text-coffee-600 hover:text-coffee-800 text-sm">
+                    <i class="fas fa-eye mr-1"></i> Xem sản phẩm
+                </a>
+                <div class="flex gap-2">
+                    <a th:href="@{/admin/categories/edit/{id}(id=${category.id})}" class="text-coffee-600 hover:text-coffee-800">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <form th:action="@{/admin/categories/delete/{id}(id=${category.id})}" method="post" class="inline">
+                        <button type="submit" class="text-red-500 hover:text-red-700" onclick="return confirm('Xóa danh mục này?')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${categories.isEmpty()}" class="bg-white rounded-xl shadow-md p-8 text-center text-gray-500">
+        <i class="fas fa-folder-open text-4xl mb-3"></i>
+        <p>Chưa có danh mục nào</p>
+    </div>
+</div>
+</body>
+</html>
+

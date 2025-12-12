@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="vi">
+<head>
+    <title>Highland Coffee - Trang chủ</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Hero Section -->
+    <div class="relative bg-espresso rounded-2xl overflow-hidden mb-12">
+        <div class="absolute inset-0 bg-gradient-to-r from-espresso via-coffee-900 to-transparent"></div>
+        <div class="relative px-8 py-16 md:py-24">
+            <h1 class="font-display text-4xl md:text-6xl text-cream mb-4">
+                Chào mừng đến với<br>
+                <span class="text-coffee-300">Highland Coffee</span>
+            </h1>
+            <p class="text-coffee-200 text-lg md:text-xl mb-8 max-w-lg">
+                Thưởng thức hương vị cà phê đậm đà, tươi mới mỗi ngày. 
+                Đặt hàng ngay để nhận ưu đãi đặc biệt!
+            </p>
+            <a th:href="@{/menu}" 
+               class="inline-block bg-coffee-600 hover:bg-coffee-500 text-cream px-8 py-4 rounded-full font-semibold text-lg transition duration-300 shadow-lg hover:shadow-xl">
+                <i class="fas fa-mug-hot mr-2"></i> Xem Menu
+            </a>
+        </div>
+    </div>
+
+    <!-- Featured Products -->
+    <div th:if="${featuredProducts != null && !featuredProducts.isEmpty()}" class="mb-12">
+        <h2 class="font-display text-3xl text-espresso mb-8 text-center">
+            <i class="fas fa-star text-yellow-500 mr-2"></i>
+            Sản phẩm nổi bật
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div th:each="product : ${featuredProducts}" 
+                 class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 group">
+                <div class="relative h-48 overflow-hidden">
+                    <img th:src="${product.imageUrl ?: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93'}" 
+                         th:alt="${product.name}"
+                         class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <div class="absolute top-4 right-4 bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        <i class="fas fa-star mr-1"></i> Nổi bật
+                    </div>
+                </div>
+                <div class="p-5">
+                    <h3 class="font-semibold text-lg text-espresso mb-2" th:text="${product.name}">Product Name</h3>
+                    <p class="text-coffee-600 text-sm mb-3 line-clamp-2" th:text="${product.description}">Description</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-coffee-800 font-bold text-xl" 
+                              th:text="${#numbers.formatDecimal(product.defaultPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+                            0đ
+                        </span>
+                        <form th:action="@{/cart/add}" method="post">
+                            <input type="hidden" name="productId" th:value="${product.id}">
+                            <button type="submit" 
+                                    class="bg-coffee-600 hover:bg-coffee-700 text-white px-4 py-2 rounded-lg transition duration-200">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categories -->
+    <div th:if="${categories != null && !categories.isEmpty()}" class="mb-12">
+        <h2 class="font-display text-3xl text-espresso mb-8 text-center">
+            <i class="fas fa-tags text-coffee-500 mr-2"></i>
+            Danh mục sản phẩm
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <a th:each="category : ${categories}"
+               th:href="@{/menu(categoryId=${category.id})}"
+               class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition duration-300 text-center group">
+                <div class="w-16 h-16 mx-auto mb-4 bg-coffee-100 rounded-full flex items-center justify-center group-hover:bg-coffee-200 transition duration-200">
+                    <i class="fas fa-mug-hot text-2xl text-coffee-600"></i>
+                </div>
+                <h3 class="font-semibold text-espresso" th:text="${category.name}">Category</h3>
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-gradient-to-br from-coffee-700 to-coffee-900 rounded-xl p-6 text-center text-white">
+            <i class="fas fa-clock text-4xl mb-4 text-coffee-300"></i>
+            <h3 class="font-semibold text-lg mb-2">Phục vụ nhanh</h3>
+            <p class="text-coffee-200 text-sm">Đơn hàng được xử lý trong vài phút</p>
+        </div>
+        <div class="bg-gradient-to-br from-green-600 to-green-800 rounded-xl p-6 text-center text-white">
+            <i class="fas fa-leaf text-4xl mb-4 text-green-300"></i>
+            <h3 class="font-semibold text-lg mb-2">Nguyên liệu tươi</h3>
+            <p class="text-green-200 text-sm">100% cà phê nguyên chất</p>
+        </div>
+        <div class="bg-gradient-to-br from-orange-500 to-orange-700 rounded-xl p-6 text-center text-white">
+            <i class="fas fa-gift text-4xl mb-4 text-orange-200"></i>
+            <h3 class="font-semibold text-lg mb-2">Ưu đãi mỗi ngày</h3>
+            <p class="text-orange-200 text-sm">Nhiều chương trình khuyến mãi hấp dẫn</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

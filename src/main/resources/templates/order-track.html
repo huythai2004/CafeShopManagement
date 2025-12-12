@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="vi">
+<head>
+    <title>Tra cứu đơn hàng - Highland Coffee</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="max-w-xl mx-auto">
+        <h1 class="font-display text-3xl text-espresso mb-8 text-center">
+            <i class="fas fa-search mr-3"></i>Tra cứu đơn hàng
+        </h1>
+
+        <form th:action="@{/order/track}" method="get" class="bg-white rounded-xl shadow-md p-6 mb-6">
+            <label class="block text-coffee-700 font-medium mb-2">Nhập mã đơn hàng</label>
+            <div class="flex gap-2">
+                <input type="text" name="orderNumber" 
+                       th:value="${param.orderNumber}"
+                       placeholder="VD: 20251212-000001"
+                       class="flex-1 px-4 py-3 border border-coffee-200 rounded-lg focus:ring-2 focus:ring-coffee-400 focus:border-transparent">
+                <button type="submit" 
+                        class="bg-coffee-600 hover:bg-coffee-700 text-white px-6 py-3 rounded-lg font-medium transition duration-200">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </form>
+
+        <div th:if="${order != null}" class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="bg-espresso text-cream px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-coffee-300 text-sm">Mã đơn hàng</p>
+                        <p class="text-xl font-bold" th:text="${order.orderNumber}">#ORDER</p>
+                    </div>
+                    <span th:class="'px-3 py-1 rounded-full text-sm font-semibold ' + ${order.statusBadgeClass}"
+                          th:text="${order.statusDisplay}">
+                        Status
+                    </span>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <div th:each="item : ${order.orderItems}" class="flex justify-between py-2 border-b border-coffee-100 last:border-0">
+                    <div>
+                        <span th:text="${item.productName}">Product</span>
+                        <span class="text-coffee-500 ml-2" th:text="'x' + ${item.quantity}">x1</span>
+                    </div>
+                    <span class="font-medium" th:text="${#numbers.formatDecimal(item.totalPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
+                </div>
+                
+                <div class="flex justify-between font-bold text-lg mt-4 pt-4 border-t border-coffee-200">
+                    <span>Tổng cộng:</span>
+                    <span th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${error != null}" class="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+            <i class="fas fa-exclamation-circle text-4xl text-red-400 mb-3"></i>
+            <p class="text-red-600" th:text="${error}">Error</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+

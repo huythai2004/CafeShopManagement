@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="vi">
+<head>
+    <title>Báo cáo tháng - Highland Coffee</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="flex items-center justify-between mb-8">
+        <h1 class="font-display text-3xl text-espresso">
+            <i class="fas fa-calendar-alt mr-3"></i>Báo cáo tháng
+        </h1>
+        <a th:href="@{/admin/reports}" class="text-coffee-600 hover:text-coffee-800">
+            <i class="fas fa-arrow-left mr-2"></i>Quay lại
+        </a>
+    </div>
+
+    <!-- Month Filter -->
+    <div class="bg-white rounded-xl shadow-md p-4 mb-6">
+        <form th:action="@{/admin/reports/monthly}" method="get" class="flex items-center gap-4">
+            <label class="text-coffee-700 font-medium">Chọn tháng:</label>
+            <select name="month" class="px-4 py-2 border border-coffee-200 rounded-lg focus:ring-2 focus:ring-coffee-400">
+                <option th:each="m : ${#numbers.sequence(1, 12)}" th:value="${m}" 
+                        th:text="'Tháng ' + ${m}" th:selected="${selectedMonth == m}">Month</option>
+            </select>
+            <select name="year" class="px-4 py-2 border border-coffee-200 rounded-lg focus:ring-2 focus:ring-coffee-400">
+                <option th:each="y : ${#numbers.sequence(2023, 2026)}" th:value="${y}" 
+                        th:text="${y}" th:selected="${selectedYear == y}">Year</option>
+            </select>
+            <button type="submit" class="bg-coffee-600 hover:bg-coffee-700 text-white px-4 py-2 rounded-lg">
+                <i class="fas fa-search mr-2"></i>Xem
+            </button>
+        </form>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white">
+            <p class="text-green-100">Tổng doanh thu tháng</p>
+            <p class="text-4xl font-bold mt-2" th:text="${#numbers.formatDecimal(report?.totalRevenue ?: 0, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</p>
+        </div>
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white">
+            <p class="text-blue-100">Tổng đơn hàng</p>
+            <p class="text-4xl font-bold mt-2" th:text="${report?.totalOrders ?: 0}">0</p>
+        </div>
+    </div>
+
+    <!-- Daily Breakdown -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="px-6 py-4 border-b border-coffee-100">
+            <h3 class="font-semibold text-espresso">Doanh thu theo ngày</h3>
+        </div>
+        <div class="p-4">
+            <div class="grid grid-cols-7 gap-2 text-center text-sm">
+                <div th:each="day : ${report?.dailyData}" 
+                     class="p-2 rounded"
+                     th:classappend="${day.revenue > 0} ? 'bg-green-100' : 'bg-gray-50'">
+                    <p class="font-medium" th:text="${#temporals.day(day.date)}">1</p>
+                    <p th:if="${day.revenue > 0}" class="text-xs text-green-600" 
+                       th:text="${#numbers.formatDecimal(day.revenue / 1000, 0, 'COMMA', 0, 'POINT')} + 'k'">0k</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+

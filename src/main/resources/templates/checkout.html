@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="vi">
+<head>
+    <title>Đặt hàng - Highland Coffee</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1 class="font-display text-3xl text-espresso mb-8">
+        <i class="fas fa-receipt mr-3"></i>Xác nhận đơn hàng
+    </h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Order Items Summary -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                <h3 class="font-semibold text-lg text-espresso mb-4">
+                    <i class="fas fa-list mr-2"></i> Chi tiết đơn hàng
+                </h3>
+                <div class="space-y-4">
+                    <div th:each="item : ${cartItems}" 
+                         class="flex items-center gap-4 py-3 border-b border-coffee-100 last:border-0">
+                        <div class="flex-1">
+                            <h4 class="font-medium text-espresso" th:text="${item.productName}">Product</h4>
+                            <p th:if="${item.modifierNames != null && !item.modifierNames.isEmpty()}"
+                               class="text-sm text-coffee-500"
+                               th:text="${#strings.listJoin(item.modifierNames, ', ')}">
+                            </p>
+                        </div>
+                        <span class="text-coffee-600" th:text="'x' + ${item.quantity}">x1</span>
+                        <span class="font-medium text-espresso w-28 text-right"
+                              th:text="${#numbers.formatDecimal(item.totalPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+                            0đ
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Info Form -->
+            <form th:action="@{/order/submit}" method="post" class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-semibold text-lg text-espresso mb-4">
+                    <i class="fas fa-user mr-2"></i> Thông tin khách hàng (không bắt buộc)
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-coffee-700 font-medium mb-2">Tên của bạn</label>
+                        <input type="text" name="guestName" placeholder="VD: Nguyễn Văn A"
+                               class="w-full px-4 py-3 border border-coffee-200 rounded-lg focus:ring-2 focus:ring-coffee-400 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-coffee-700 font-medium mb-2">Số điện thoại</label>
+                        <input type="tel" name="guestPhone" placeholder="VD: 0901234567"
+                               class="w-full px-4 py-3 border border-coffee-200 rounded-lg focus:ring-2 focus:ring-coffee-400 focus:border-transparent">
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-coffee-700 font-medium mb-2">Ghi chú cho quán</label>
+                    <textarea name="customerNotes" rows="3" placeholder="VD: Ít đường, nhiều đá..."
+                              class="w-full px-4 py-3 border border-coffee-200 rounded-lg focus:ring-2 focus:ring-coffee-400 focus:border-transparent"></textarea>
+                </div>
+
+                <div class="bg-coffee-50 rounded-lg p-4 mb-6">
+                    <div class="flex items-center gap-3 text-coffee-700">
+                        <i class="fas fa-info-circle text-xl"></i>
+                        <p class="text-sm">
+                            Đơn hàng sẽ được thanh toán bằng <strong>tiền mặt</strong> khi nhận hàng.
+                        </p>
+                    </div>
+                </div>
+
+                <button type="submit" 
+                        class="w-full bg-coffee-600 hover:bg-coffee-700 text-white py-4 rounded-lg font-semibold text-lg transition duration-200">
+                    <i class="fas fa-check-circle mr-2"></i> Xác nhận đặt hàng
+                </button>
+            </form>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-xl shadow-md p-6 sticky top-24">
+                <h3 class="font-display text-xl text-espresso mb-4 pb-4 border-b border-coffee-200">
+                    Tổng thanh toán
+                </h3>
+                
+                <div class="space-y-3 mb-6">
+                    <div class="flex justify-between text-coffee-600">
+                        <span>Tạm tính:</span>
+                        <span th:text="${#numbers.formatDecimal(subtotal, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
+                    </div>
+                    <div class="flex justify-between text-coffee-600">
+                        <span>Phương thức:</span>
+                        <span class="font-medium">Tiền mặt</span>
+                    </div>
+                    <div class="flex justify-between font-bold text-xl text-espresso pt-3 border-t border-coffee-200">
+                        <span>Tổng cộng:</span>
+                        <span th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</span>
+                    </div>
+                </div>
+
+                <a th:href="@{/cart}" class="block text-center text-coffee-600 hover:text-coffee-800 font-medium">
+                    <i class="fas fa-arrow-left mr-2"></i> Quay lại giỏ hàng
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
