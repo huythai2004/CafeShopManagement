@@ -68,6 +68,10 @@ public class OrderService {
         String orderNumber = generateOrderNumber();
         order.setOrderNumber(orderNumber);
         order.setStatus("PENDING");
+        
+        // Initialize default values if null (builder doesn't apply field defaults)
+        if (order.getTaxAmount() == null) order.setTaxAmount(BigDecimal.ZERO);
+        if (order.getDiscountAmount() == null) order.setDiscountAmount(BigDecimal.ZERO);
 
         // Calculate totals
         BigDecimal subtotal = BigDecimal.ZERO;
@@ -83,7 +87,9 @@ public class OrderService {
             orderItem.setProductName(product.getName());
             orderItem.setQuantity(cartItem.getQuantity());
             orderItem.setUnitPrice(product.getDefaultPrice());
-            orderItem.setModifiersPrice(cartItem.getModifiersPrice());
+            // Handle null modifiersPrice
+            BigDecimal modPrice = cartItem.getModifiersPrice() != null ? cartItem.getModifiersPrice() : BigDecimal.ZERO;
+            orderItem.setModifiersPrice(modPrice);
             orderItem.calculateTotalPrice();
 
             subtotal = subtotal.add(orderItem.getTotalPrice());
