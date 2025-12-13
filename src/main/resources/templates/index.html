@@ -16,10 +16,10 @@
                 <span class="text-coffee-300">Highland Coffee</span>
             </h1>
             <p class="text-coffee-200 text-lg md:text-xl mb-8 max-w-lg">
-                Thưởng thức hương vị cà phê đậm đà, tươi mới mỗi ngày. 
+                Thưởng thức hương vị cà phê đậm đà, tươi mới mỗi ngày.
                 Đặt hàng ngay để nhận ưu đãi đặc biệt!
             </p>
-            <a th:href="@{/menu}" 
+            <a th:href="@{/menu}"
                class="inline-block bg-coffee-600 hover:bg-coffee-500 text-cream px-8 py-4 rounded-full font-semibold text-lg transition duration-300 shadow-lg hover:shadow-xl">
                 <i class="fas fa-mug-hot mr-2"></i> Xem Menu
             </a>
@@ -33,10 +33,10 @@
             Sản phẩm nổi bật
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div th:each="product : ${featuredProducts}" 
+            <div th:each="product : ${featuredProducts}"
                  class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 group">
                 <div class="relative h-48 overflow-hidden">
-                    <img th:src="${product.imageUrl ?: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93'}" 
+                    <img th:src="${product.imageUrl ?: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93'}"
                          th:alt="${product.name}"
                          class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
                     <div class="absolute top-4 right-4 bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
@@ -47,13 +47,13 @@
                     <h3 class="font-semibold text-lg text-espresso mb-2" th:text="${product.name}">Product Name</h3>
                     <p class="text-coffee-600 text-sm mb-3 line-clamp-2" th:text="${product.description}">Description</p>
                     <div class="flex items-center justify-between">
-                        <span class="text-coffee-800 font-bold text-xl" 
+                        <span class="text-coffee-800 font-bold text-xl"
                               th:text="${#numbers.formatDecimal(product.defaultPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">
                             0đ
                         </span>
                         <form th:action="@{/cart/add}" method="post">
                             <input type="hidden" name="productId" th:value="${product.id}">
-                            <button type="submit" 
+                            <button type="submit"
                                     class="bg-coffee-600 hover:bg-coffee-700 text-white px-4 py-2 rounded-lg transition duration-200">
                                 <i class="fas fa-plus"></i>
                             </button>

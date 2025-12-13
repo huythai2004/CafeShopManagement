@@ -108,21 +108,21 @@
             </div>
         </div>
     </div>
-</div>
 
-<script>
-function increaseQty(btn) {
-    const input = btn.parentElement.querySelector('input[type="number"]');
-    input.value = parseInt(input.value) + 1;
-}
-
-function decreaseQty(btn) {
-    const input = btn.parentElement.querySelector('input[type="number"]');
-    if (parseInt(input.value) > 1) {
-        input.value = parseInt(input.value) - 1;
+    <script th:inline="javascript">
+    function increaseQty(btn) {
+        const input = btn.parentElement.querySelector('input[type="number"]');
+        input.value = parseInt(input.value) + 1;
     }
-}
-</script>
+
+    function decreaseQty(btn) {
+        const input = btn.parentElement.querySelector('input[type="number"]');
+        if (parseInt(input.value) > 1) {
+            input.value = parseInt(input.value) - 1;
+        }
+    }
+    </script>
+</div>
 </body>
 </html>
 

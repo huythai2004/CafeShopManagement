@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,8 +23,6 @@ public class OrderService {
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
     private final PaymentRepository paymentRepository;
-
-    private static final AtomicLong orderSequence = new AtomicLong(1);
 
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
@@ -171,9 +169,27 @@ public class OrderService {
         };
     }
 
-    private String generateOrderNumber() {
+    private synchronized String generateOrderNumber() {
         String datePrefix = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        long seq = orderSequence.getAndIncrement();
+        
+        // Query database for the max order number with today's prefix
+        Optional<String> maxOrderNumber = orderRepository.findMaxOrderNumberByPrefix(datePrefix);
+        
+        long seq = 1;
+        if (maxOrderNumber.isPresent()) {
+            String maxNumber = maxOrderNumber.get();
+            // Extract the sequence number from format: yyyyMMdd-NNNNNN
+            String[] parts = maxNumber.split("-");
+            if (parts.length == 2) {
+                try {
+                    seq = Long.parseLong(parts[1]) + 1;
+                } catch (NumberFormatException e) {
+                    // If parsing fails, start from 1
+                    seq = 1;
+                }
+            }
+        }
+        
         return String.format("%s-%06d", datePrefix, seq);
     }
 

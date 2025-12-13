@@ -47,5 +47,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByIdWithItems(@Param("id") Long id);
 
     List<Order> findTop10ByOrderByCreatedAtDesc();
+
+    @Query("SELECT MAX(o.orderNumber) FROM Order o WHERE o.orderNumber LIKE :prefix%")
+    Optional<String> findMaxOrderNumberByPrefix(@Param("prefix") String prefix);
 }
 
