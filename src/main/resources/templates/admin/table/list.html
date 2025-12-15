@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="vi">
+<head>
+    <title>Quản lý bàn - Highland Coffee</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="font-display text-3xl text-espresso">
+                <i class="fas fa-chair mr-3"></i>Quản lý bàn
+            </h1>
+            <p class="text-coffee-500 mt-2">
+                Tổng: <span th:text="${totalCount}">0</span> bàn | 
+                Đang hoạt động: <span th:text="${activeCount}">0</span> bàn
+            </p>
+        </div>
+        <a th:href="@{/admin/tables/create}" 
+           class="bg-coffee-600 hover:bg-coffee-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200">
+            <i class="fas fa-plus mr-2"></i>Thêm bàn
+        </a>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div th:each="table : ${tables}" 
+             class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+            <div class="p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center"
+                         th:classappend="${table.isActive} ? 'bg-green-100' : 'bg-gray-100'">
+                        <i class="fas fa-chair text-xl"
+                           th:classappend="${table.isActive} ? 'text-green-600' : 'text-gray-400'"></i>
+                    </div>
+                    <span th:if="${table.isActive}" 
+                          class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">Hoạt động</span>
+                    <span th:unless="${table.isActive}" 
+                          class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs font-medium">Tạm ẩn</span>
+                </div>
+                <h3 class="font-semibold text-lg text-espresso mb-1" th:text="${table.displayName}">Bàn 1</h3>
+                <p class="text-coffee-500 text-sm">
+                    <i class="fas fa-users mr-1"></i>
+                    <span th:text="${table.capacity}">4</span> người
+                </p>
+            </div>
+            <div class="px-4 py-3 bg-coffee-50 flex justify-between items-center">
+                <form th:action="@{/admin/tables/toggle/{id}(id=${table.id})}" method="post" class="inline">
+                    <button type="submit" class="text-sm"
+                            th:classappend="${table.isActive} ? 'text-yellow-600 hover:text-yellow-800' : 'text-green-600 hover:text-green-800'">
+                        <i th:class="${table.isActive} ? 'fas fa-eye-slash mr-1' : 'fas fa-eye mr-1'"></i>
+                        <span th:text="${table.isActive} ? 'Ẩn' : 'Hiện'">Toggle</span>
+                    </button>
+                </form>
+                <div class="flex gap-3">
+                    <a th:href="@{/admin/tables/edit/{id}(id=${table.id})}" 
+                       class="text-coffee-600 hover:text-coffee-800">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <form th:action="@{/admin/tables/delete/{id}(id=${table.id})}" method="post" class="inline">
+                        <button type="submit" class="text-red-500 hover:text-red-700" 
+                                onclick="return confirm('Xóa bàn này?')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${tables.isEmpty()}" class="bg-white rounded-xl shadow-md p-8 text-center text-gray-500">
+        <i class="fas fa-chair text-4xl mb-3"></i>
+        <p>Chưa có bàn nào</p>
+    </div>
+</div>
+</body>
+</html>
+
+

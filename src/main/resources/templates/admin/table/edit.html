@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="vi">
+<head>
+    <title>Sửa thông tin bàn - Highland Coffee</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="mb-8">
+        <a th:href="@{/admin/tables}" class="text-coffee-600 hover:text-coffee-800 mb-4 inline-block">
+            <i class="fas fa-arrow-left mr-2"></i>Quay lại danh sách
+        </a>
+        <h1 class="font-display text-3xl text-espresso">
+            <i class="fas fa-edit mr-3"></i>Sửa thông tin bàn
+        </h1>
+    </div>
+
+    <div class="max-w-xl">
+        <form th:action="@{/admin/tables/edit/{id}(id=${table.id})}" method="post" 
+              class="bg-white rounded-xl shadow-md p-6">
+            <div class="mb-4">
+                <label class="block text-coffee-700 font-medium mb-2">
+                    Số bàn <span class="text-red-500">*</span>
+                </label>
+                <input type="number" name="tableNumber" required min="1"
+                       th:value="${table.tableNumber}"
+                       class="w-full px-4 py-3 border border-coffee-200 rounded-lg focus:ring-2 focus:ring-coffee-400 focus:border-transparent">
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-coffee-700 font-medium mb-2">Tên bàn</label>
+                <input type="text" name="name" maxlength="50"
+                       th:value="${table.name}"
+                       class="w-full px-4 py-3 border border-coffee-200 rounded-lg focus:ring-2 focus:ring-coffee-400 focus:border-transparent"
+                       placeholder="VD: Bàn VIP 1">
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-coffee-700 font-medium mb-2">Sức chứa (người)</label>
+                <input type="number" name="capacity" min="1" max="20"
+                       th:value="${table.capacity}"
+                       class="w-full px-4 py-3 border border-coffee-200 rounded-lg focus:ring-2 focus:ring-coffee-400 focus:border-transparent">
+            </div>
+
+            <div class="mb-6">
+                <label class="flex items-center cursor-pointer">
+                    <input type="checkbox" name="isActive"
+                           th:checked="${table.isActive}"
+                           class="w-5 h-5 text-coffee-600 rounded focus:ring-coffee-400">
+                    <span class="ml-3 text-coffee-700">Kích hoạt bàn</span>
+                </label>
+            </div>
+
+            <div class="flex gap-3">
+                <button type="submit" 
+                        class="flex-1 bg-coffee-600 hover:bg-coffee-700 text-white py-3 rounded-lg font-medium transition duration-200">
+                    <i class="fas fa-save mr-2"></i>Lưu thay đổi
+                </button>
+                <a th:href="@{/admin/tables}" 
+                   class="px-6 py-3 border border-coffee-300 text-coffee-700 rounded-lg hover:bg-coffee-50 transition duration-200">
+                    Hủy
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
+
+

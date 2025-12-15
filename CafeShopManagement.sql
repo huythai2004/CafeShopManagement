@@ -241,6 +241,14 @@ CREATE TABLE payments (
     CONSTRAINT FK_pay_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
 );
 GO
+CREATE TABLE tables (
+    id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    table_number INT NOT NULL UNIQUE,
+    name NVARCHAR(50),
+    capacity INT DEFAULT 4,
+    is_active BIT DEFAULT 1,
+    created_at DATETIME2 DEFAULT SYSUTCDATETIME()
+);
 
 CREATE INDEX IDX_payments_status ON payments(status);
 GO

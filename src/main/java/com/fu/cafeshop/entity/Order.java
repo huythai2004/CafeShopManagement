@@ -26,6 +26,10 @@ public class Order {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
+    @ManyToOne
+    @JoinColumn(name = "table_id")
+    private CafeTable cafeTable;
+
     @Column(name = "guest_name", length = 100)
     private String guestName;
 
